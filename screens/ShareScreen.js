@@ -10,14 +10,16 @@ import {
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
-import head from "../assets/FormHeader.png";
+import head from "../assets/MilesShare.png";
 const deviceWidth = Dimensions.get('window').width;
 
 export default function SpotlightScreen() {
   return (
     <View style={styles.container}>
-      <Image source={head} style= {{ width: deviceWidth ,
-    height: deviceWidth/1.32}}/>
+      <Image source={head} style= {{ 
+        flex: 1,
+        width: deviceWidth,
+    height: deviceWidth*1}}/>
     </View>
   );
 }

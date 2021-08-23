@@ -1,12 +1,12 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Image, Platform, View, Button } from "react-native";
+import { Image, Platform, View, TouchableOpacity, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { GiftedChat, Actions } from "react-native-gifted-chat";
+import { GiftedChat, Actions, InputToolbar, Composer, Send } from "react-native-gifted-chat";
 import db from "../firebase";
 import firebase from "@firebase/app";
 import * as ImagePicker from "expo-image-picker";
-
-export default function ChatScreen({ route }) {
+import Free from "../assets/Peace.png"
+export default function ChatScreen({ route, navigation }) {
   const [imageURI, setImageURI] = useState(null);
   const [messages, setMessages] = useState([]);
 
@@ -86,20 +86,30 @@ export default function ChatScreen({ route }) {
   };
 
   // Replace if using SNAP MINI...
-  const renderAccessory = null;
-  // const renderAccessory = (props) => (
-  //   <View>
-  //     <Button
-  //       onPress={() => {
-  //         alert("Launching Snap Mini...");
-  //       }}
-  //       title={"Launch Snap Mini"}
-  //     />
-  //   </View>
-  // );
+  //const renderAccessory = null;
+  const renderAccessory = (props) => (
+    <View>
+      <TouchableOpacity
+        onPress={() => {
+         navigation.navigate("BreakingBread");
+        }}>
+          <Text style= {{
+            textAlign: 'center'
+          }}>Launch Snap Mini!</Text>
+        <Image sytle = {
+          {
+            marginTop: 10,
+            height: 5,
+            width: 5,
+            }
+        } source={Free} />
+      </TouchableOpacity>
+    </View>
+  );
 
   const renderActions = (props) => {
     return (
+   
       <Actions
         {...props}
         options={{
@@ -116,13 +126,34 @@ export default function ChatScreen({ route }) {
               source={{ uri: imageURI }}
             />
           ) : (
-            <Ionicons name={"camera"} size={28} />
+            <View style = {{
+             
+              width: 40, 
+              height: 40,
+              borderRadius: 50,
+              backgroundColor: '#EDEFF2',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderColor: '#E4E9F2',
+            }}>
+             <Ionicons name={"camera"} size={30} color={'#424344'} />
+            </View>
           )
         }
       />
     );
   };
 
+ const  renderInputToolbar= (props) =>
+   {
+     return (
+       <InputToolbar {...props} containerStyle={{
+        backgroundColor: 'white',
+        paddingTop: 6,
+      }}
+      primaryStyle={{ alignItems: 'center' }} />
+     );
+   }
   const handleCamera = async () => {
     if (Platform.OS !== "web") {
       let permissions = await ImagePicker.getCameraPermissionsAsync();
@@ -139,7 +170,37 @@ export default function ChatScreen({ route }) {
       setImageURI(result.uri);
     }
   };
-
+  const renderComposer = (props) => (
+    <Composer
+      {...props}
+      textInputStyle={{
+        color: '#222B45',
+        width: 10,
+        backgroundColor: '#EDF1F7',
+        borderWidth: 1,
+        borderRadius: 5,
+        borderColor: '#E4E9F2',
+        paddingHorizontal: 12,
+        marginLeft: 20,
+      }}
+    />
+  );
+  const renderSend = (props) => (
+    <Send
+      {...props}
+      disabled={!props.text}
+      containerStyle={{
+        width: 70,
+        height: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
+        //marginHorizontal: 4,
+        marginRight: 10,
+      }}
+    >
+      
+    </Send>
+  );
   const handleLibrary = async () => {
     if (Platform.OS !== "web") {
       let permissions = await ImagePicker.getMediaLibraryPermissionsAsync();
@@ -168,11 +229,16 @@ export default function ChatScreen({ route }) {
         name: currUser.displayName,
         avatar: currUser.photoURL ? currUser.photoURL : null,
       }}
+      renderInputToolbar={renderInputToolbar}
       inverted={false}
+      placeholder={"Chat"}
       showUserAvatar={true}
       renderUsernameOnMessage={true}
       renderActions={renderActions}
       renderAccessory={renderAccessory}
+      renderComposer={renderComposer}
+      renderSend = {renderSend}
     />
   );
 }
+
